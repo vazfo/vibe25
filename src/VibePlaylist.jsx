@@ -5,7 +5,7 @@ export default function VibePlaylist() {
   const [playlist, setPlaylist] = useState(null);
   const [tab, setTab] = useState("generator");
 
-  const handleGenerate = async () => {
+ const handleGenerate = async () => {
   setLoading(true);
   try {
     const res = await fetch("/api/generate", {
@@ -17,6 +17,8 @@ export default function VibePlaylist() {
     });
 
     const data = await res.json();
+    console.log("AI response:", data); // ✅ THIS LINE HELPS DEBUG
+
     if (res.ok) {
       setPlaylist({
         title: data.title,

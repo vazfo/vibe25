@@ -5,13 +5,36 @@ export default function VibePlaylist() {
   const [playlist, setPlaylist] = useState(null);
   const [tab, setTab] = useState("generator");
 
-  const handleGenerate = () => {
-    setPlaylist({
-      title: `Vibe: ${vibe}`,
-      description: "A 25-song playlist to match your mood.",
-      songs: Array.from({ length: 25 }, (_, i) => `Song ${i + 1}`),
+  const handleGenerate = async () => {
+  setLoading(true);
+  try {
+    const res = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ vibe }),
     });
-  };
+
+    const data = await res.json();
+    if (res.ok) {
+      setPlaylist({
+        title: data.title,
+        description: data.description,
+        thumbnail: data.image,
+        songs: data.songs,
+      });
+    } else {
+      alert("Failed to generate playlist.");
+      console.error(data.error);
+    }
+  } catch (err) {
+    alert("Something went wrong.");
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const renderTabs = () => (
     <div style={{

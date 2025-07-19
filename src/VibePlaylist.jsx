@@ -17,22 +17,24 @@ export default function VibePlaylist() {
     <div style={{
       display: "flex",
       justifyContent: "center",
-      gap: "1.5rem",
+      gap: "1rem",
       marginBottom: "2rem",
-      fontWeight: 500,
-      fontSize: "0.95rem",
-      color: "#b3b3b3"
     }}>
       {['generator', 'why', 'how'].map((key) => (
         <button
           key={key}
           onClick={() => setTab(key)}
           style={{
-            background: "none",
-            border: "none",
+            padding: "0.6rem 1.2rem",
+            borderRadius: "50px",
+            border: tab === key ? "2px solid #1db954" : "1px solid #333",
+            backgroundColor: tab === key ? "#1db954" : "transparent",
+            color: tab === key ? "black" : "#ccc",
+            fontWeight: 500,
+            fontSize: "0.95rem",
             cursor: "pointer",
-            color: tab === key ? "#fff" : "#b3b3b3",
-            textDecoration: tab === key ? "underline" : "none"
+            transition: "all 0.3s ease",
+            boxShadow: tab === key ? "0 0 10px rgba(29, 185, 84, 0.4)" : "none"
           }}
         >
           {key === 'generator' ? 'Generator' : key === 'why' ? 'Why We Made This' : 'How It Works'}
@@ -169,4 +171,5 @@ export default function VibePlaylist() {
     </div>
   );
 }
+
 

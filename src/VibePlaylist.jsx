@@ -1,200 +1,131 @@
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 export default function VibePlaylist() {
   const [vibe, setVibe] = useState("");
+  const [loading, setLoading] = useState(false);
   const [playlist, setPlaylist] = useState(null);
   const [tab, setTab] = useState("generator");
 
- const handleGenerate = async () => {
-  setLoading(true);
-  try {
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ vibe }),
-    });
-
-    const data = await res.json();
-    console.log("AI response:", data); // ✅ THIS LINE HELPS DEBUG
-
-    if (res.ok) {
-      setPlaylist({
-        title: data.title,
-        description: data.description,
-        thumbnail: data.image,
-        songs: data.songs,
+  const handleGenerate = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ vibe }),
       });
-    } else {
-      alert("Failed to generate playlist.");
-      console.error(data.error);
-    }
-  } catch (err) {
-    alert("Something went wrong.");
-    console.error(err);
-  } finally {
-    setLoading(false);
-  }
-};
 
-  const renderTabs = () => (
-    <div style={{
-      display: "flex",
-      justifyContent: "center",
-      gap: "1rem",
-      marginBottom: "2rem",
-    }}>
-      {['generator', 'why', 'how'].map((key) => (
-        <button
-          key={key}
-          onClick={() => setTab(key)}
-          style={{
-            padding: "0.6rem 1.2rem",
-            borderRadius: "50px",
-            border: tab === key ? "2px solid #1db954" : "1px solid #333",
-            backgroundColor: tab === key ? "#1db954" : "transparent",
-            color: tab === key ? "black" : "#ccc",
-            fontWeight: 500,
-            fontSize: "0.95rem",
-            cursor: "pointer",
-            transition: "all 0.3s ease",
-            boxShadow: tab === key ? "0 0 10px rgba(29, 185, 84, 0.4)" : "none"
-          }}
-        >
-          {key === 'generator' ? 'Generator' : key === 'why' ? 'Why We Made This' : 'How It Works'}
-        </button>
-      ))}
-    </div>
-  );
+      const data = await res.json();
+      console.log("AI response:", data);
+
+      if (res.ok) {
+        setPlaylist({
+          title: data.title,
+          description: data.description,
+          thumbnail: data.image,
+          songs: data.songs,
+        });
+      } else {
+        alert("Failed to generate playlist.");
+        console.error(data.error);
+      }
+    } catch (err) {
+      alert("Something went wrong.");
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const renderContent = () => {
-    if (tab === 'why') {
+    if (tab === "why") {
       return (
-        <div style={{ maxWidth: "700px", color: "#ccc", textAlign: "center", lineHeight: 1.6 }}>
-          <h2 style={{ color: "#1db954", fontSize: "2rem", marginBottom: "1rem" }}>Why We Made Vibe 25</h2>
-          <p>
-            We built Vibe 25 because music is personal — and you shouldn’t have to search for hours to find the perfect playlist.
-            Whether you're feeling nostalgic, heartbroken, or hyped for a night out, you deserve a soundtrack that gets you instantly.
+        <div className="section-card max-w-2xl mx-auto text-gray-300">
+          <h2 className="text-3xl font-bold mb-4 title-text">Why We Made Vibe 25</h2>
+          <p className="description">
+            We built Vibe 25 because music is personal — and you shouldn’t have to search for hours to find the perfect playlist. Whether you're feeling nostalgic, heartbroken, or hyped for a night out, you deserve a soundtrack that just gets you.
+          </p>
+          <p className="description">
+            With AI, we can instantly generate a playlist that matches your energy. This is about more than just music — it's about mood, memory, and moments.
           </p>
         </div>
       );
     }
-
-    if (tab === 'how') {
+    if (tab === "how") {
       return (
-        <div style={{ maxWidth: "700px", color: "#ccc", textAlign: "center", lineHeight: 1.6 }}>
-          <h2 style={{ color: "#1db954", fontSize: "2rem", marginBottom: "1rem" }}>How It Works</h2>
-          <p>
-            You type in a mood, theme, or concept. Our AI interprets your vibe, pulls songs using custom logic and Spotify metadata,
-            and generates a 25-song playlist with a custom title and description.
+        <div className="section-card max-w-2xl mx-auto text-gray-300">
+          <h2 className="text-3xl font-bold mb-4 title-text">How It Works</h2>
+          <p className="description">
+            You type in a mood, theme, or concept. Our AI interprets your vibe, pulls song recommendations using internal logic and Spotify metadata, and generates a 25-song playlist just for you — complete with a title, description, and a custom thumbnail.
+          </p>
+          <p className="description">
+            When you're ready, hit “Save to Spotify” and it goes straight to your account.
           </p>
         </div>
       );
     }
 
     return (
-      <>
-        <div style={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          gap: "1rem",
-          width: "100%",
-          maxWidth: "600px"
-        }}>
-          <input
+      <div className="content-container">
+        <h1 className="text-5xl font-extrabold mb-2 text-green-500 title-text">Vibe 25</h1>
+        <p className="text-green-400 flex items-center justify-center gap-2 mb-6">
+          <svg className="w-6 h-6 fill-green-500" viewBox="0 0 168 168" xmlns="http://www.w3.org/2000/svg">
+            <path d="M84,0C37.7,0,0,37.7,0,84s37.7,84,84,84s84-37.7,84-84S130.3,0,84,0z M122.9,120.5c-1.4,2.2-4.3,2.8-6.4,1.4 c-17.5-10.7-39.6-13.1-65.6-7.1c-2.5,0.6-5-1-5.7-3.4c-0.6-2.5,1-5,3.4-5.7c29.4-6.9,55.6-4.1,76.1,8.3 C123.7,115.6,124.3,118.4,122.9,120.5z M132.4,98.2c-1.7,2.6-5.2,3.3-7.7,1.6c-20-12.3-50.5-15.9-74.1-8.6c-3,0.9-6.2-0.8-7.1-3.8 c-0.9-3,0.8-6.2,3.8-7.1c28.5-8.5,63.3-4.4,87.3,10.1C133.4,92.1,134.1,95.6,132.4,98.2z M134.8,75.5c-24-14.4-63.4-15.8-86.2-8.6 c-3.4,1.1-7.1-0.8-8.2-4.3c-1.1-3.4,0.8-7.1,4.3-8.2c26.5-8.3,70.1-6.7,98.7,10.1c3.1,1.9,4.1,6.1,2.2,9.2 C143.8,76.4,138.5,77.7,134.8,75.5z"/>
+          </svg>
+          Playlist Generator
+        </p>
+        <p className="mb-6 text-gray-300">Type in a mood, theme, or concept — we’ll make the perfect playlist.</p>
+
+        <div className="flex items-center gap-2 mb-6 w-full max-w-xl">
+          <Input
             type="text"
-            placeholder="Type a mood, theme, or vibe..."
             value={vibe}
             onChange={(e) => setVibe(e.target.value)}
-            style={{
-              flex: 1,
-              padding: "0.8rem 1rem",
-              fontSize: "1rem",
-              borderRadius: "50px",
-              border: "1px solid #333",
-              backgroundColor: "#1e1e1e",
-              color: "#fff",
-              outline: "none",
-              transition: "0.3s ease",
-              boxShadow: "0 0 0 0 rgba(29,185,84, 0)"
-            }}
-            onFocus={(e) => e.target.style.boxShadow = "0 0 0 3px rgba(29,185,84, 0.4)"}
-            onBlur={(e) => e.target.style.boxShadow = "0 0 0 0 rgba(29,185,84, 0)"}
+            placeholder="e.g. summer nostalgia, heartbreak, beach sunset"
+            className="flex-1 text-black"
           />
-          <button
-            onClick={handleGenerate}
-            style={{
-              padding: "0.8rem 1.5rem",
-              fontSize: "1rem",
-              background: "#1db954",
-              color: "black",
-              border: "none",
-              borderRadius: "50px",
-              cursor: "pointer",
-              fontWeight: 600,
-              transition: "0.3s ease"
-            }}
-            onMouseEnter={(e) => e.target.style.background = "#1ed760"}
-            onMouseLeave={(e) => e.target.style.background = "#1db954"}
-          >
-            Generate
-          </button>
+          <Button onClick={handleGenerate} disabled={loading || !vibe}>
+            {loading ? <Loader2 className="animate-spin" /> : "Generate"}
+          </Button>
         </div>
 
         {playlist && (
-          <div style={{
-            backgroundColor: "#181818",
-            padding: "2rem",
-            borderRadius: "16px",
-            width: "100%",
-            maxWidth: "700px",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-            transition: "all 0.3s ease"
-          }}>
-            <h2 style={{ fontSize: "1.75rem", color: "#1db954", marginBottom: "0.5rem" }}>{playlist.title}</h2>
-            <p style={{ color: "#ccc", marginBottom: "1.5rem" }}>{playlist.description}</p>
-            <div style={{
-              columns: 2,
-              gap: "2rem",
-              color: "#eee",
-              fontSize: "0.95rem",
-              lineHeight: 1.6
-            }}>
-              {playlist.songs.map((song, i) => (
-                <div key={i}>• {song}</div>
-              ))}
-            </div>
-          </div>
+          <Card className="section-card text-left w-full max-w-4xl">
+            <CardContent className="p-4">
+              <div className="flex flex-col md:flex-row items-start gap-6">
+                <img src={playlist.thumbnail} alt="thumbnail" className="w-40 h-40 rounded-xl object-cover thumbnail" />
+                <div>
+                  <h2 className="text-2xl font-semibold mb-2 text-white">{playlist.title}</h2>
+                  <p className="description">{playlist.description}</p>
+                  <ul className="tracklist list-disc pl-5 space-y-1 text-sm">
+                    {playlist.songs.map((song, index) => (
+                      <li key={index}>{song}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
-      </>
+      </div>
     );
   };
 
   return (
-    <div style={{
-      background: "linear-gradient(145deg, #121212, #1db954)",
-      color: "#fff",
-      fontFamily: "'Circular', 'Helvetica Neue', sans-serif",
-      padding: "4rem 1.5rem",
-      minHeight: "100vh",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "flex-start",
-      gap: "2rem",
-      transition: "all 0.3s ease-in-out"
-    }}>
-      <div style={{ textAlign: "center" }}>
-        <h1 style={{ fontSize: "3rem", color: "#1db954", fontWeight: 700 }}>Vibe 25</h1>
-        <p style={{ fontSize: "1.2rem", color: "#b3b3b3" }}>Playlist Generator</p>
+    <div className="min-h-screen bg-gradient-to-br from-black to-green-900 text-white p-8 font-sans">
+      <div className="flex justify-center gap-6 text-gray-400 mb-10 text-sm font-medium tracking-wide">
+        <button onClick={() => setTab("generator")} className={tab === "generator" ? "text-white underline underline-offset-4" : "hover:text-white"}>Generator</button>
+        <button onClick={() => setTab("why")} className={tab === "why" ? "text-white underline underline-offset-4" : "hover:text-white"}>Why We Made This</button>
+        <button onClick={() => setTab("how")} className={tab === "how" ? "text-white underline underline-offset-4" : "hover:text-white"}>How It Works</button>
       </div>
 
-      {renderTabs()}
       {renderContent()}
     </div>
   );
 }
-
-

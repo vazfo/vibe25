@@ -3,6 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
+import "./SpotifyThemeCSS.css";
 
 export default function VibePlaylist() {
   const [vibe, setVibe] = useState("");
@@ -13,35 +14,31 @@ export default function VibePlaylist() {
   const handleGenerate = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/generate", {
+      const response = await fetch("/api/generate", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ vibe }),
       });
 
-      const data = await res.json();
-      console.log("AI response:", data);
-
-      if (res.ok) {
-        setPlaylist({
-          title: data.title,
-          description: data.description,
-          thumbnail: data.image,
-          songs: data.songs,
-        });
-      } else {
-        alert("Failed to generate playlist.");
-        console.error(data.error);
-      }
-    } catch (err) {
-      alert("Something went wrong.");
-      console.error(err);
+      const data = await response.json();
+      setPlaylist(data);
+    } catch (error) {
+      console.error("Failed to generate playlist:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  const renderSpotifyLogo = () => (
+    <svg className="w-6 h-6 fill-green-500" viewBox="0 0 168 168" xmlns="http://www.w3.org/2000/svg">
+      <path d="M84,0C37.7,0,0,37.7,0,84s37.7,84,84,84s84-37.7,84-84S130.3,0,84,0z M122.9,120.5c-1.4,2.2-4.3,2.8-6.4,1.4
+        c-17.5-10.7-39.6-13.1-65.6-7.1c-2.5,0.6-5-1-5.7-3.4c-0.6-2.5,1-5,3.4-5.7c29.4-6.9,55.6-4.1,76.1,8.3
+        C123.7,115.6,124.3,118.4,122.9,120.5z M132.4,98.2c-1.7,2.6-5.2,3.3-7.7,1.6c-20-12.3-50.5-15.9-74.1-8.6c-3,0.9-6.2-0.8-7.1-3.8
+        c-0.9-3,0.8-6.2,3.8-7.1c28.5-8.5,63.3-4.4,87.3,10.1C133.4,92.1,134.1,95.6,132.4,98.2z M134.8,75.5c-24-14.4-63.4-15.8-86.2-8.6
+        c-3.4,1.1-7.1-0.8-8.2-4.3c-1.1-3.4,0.8-7.1,4.3-8.2c26.5-8.3,70.1-6.7,98.7,10.1c3.1,1.9,4.1,6.1,2.2,9.2
+        C143.8,76.4,138.5,77.7,134.8,75.5z"/>
+    </svg>
+  );
 
   const renderContent = () => {
     if (tab === "why") {
@@ -75,10 +72,7 @@ export default function VibePlaylist() {
       <div className="content-container">
         <h1 className="text-5xl font-extrabold mb-2 text-green-500 title-text">Vibe 25</h1>
         <p className="text-green-400 flex items-center justify-center gap-2 mb-6">
-          <svg className="w-6 h-6 fill-green-500" viewBox="0 0 168 168" xmlns="http://www.w3.org/2000/svg">
-            <path d="M84,0C37.7,0,0,37.7,0,84s37.7,84,84,84s84-37.7,84-84S130.3,0,84,0z M122.9,120.5c-1.4,2.2-4.3,2.8-6.4,1.4 c-17.5-10.7-39.6-13.1-65.6-7.1c-2.5,0.6-5-1-5.7-3.4c-0.6-2.5,1-5,3.4-5.7c29.4-6.9,55.6-4.1,76.1,8.3 C123.7,115.6,124.3,118.4,122.9,120.5z M132.4,98.2c-1.7,2.6-5.2,3.3-7.7,1.6c-20-12.3-50.5-15.9-74.1-8.6c-3,0.9-6.2-0.8-7.1-3.8 c-0.9-3,0.8-6.2,3.8-7.1c28.5-8.5,63.3-4.4,87.3,10.1C133.4,92.1,134.1,95.6,132.4,98.2z M134.8,75.5c-24-14.4-63.4-15.8-86.2-8.6 c-3.4,1.1-7.1-0.8-8.2-4.3c-1.1-3.4,0.8-7.1,4.3-8.2c26.5-8.3,70.1-6.7,98.7,10.1c3.1,1.9,4.1,6.1,2.2,9.2 C143.8,76.4,138.5,77.7,134.8,75.5z"/>
-          </svg>
-          Playlist Generator
+          {renderSpotifyLogo()} Playlist Generator
         </p>
         <p className="mb-6 text-gray-300">Type in a mood, theme, or concept — we’ll make the perfect playlist.</p>
 
@@ -99,10 +93,10 @@ export default function VibePlaylist() {
           <Card className="section-card text-left w-full max-w-4xl">
             <CardContent className="p-4">
               <div className="flex flex-col md:flex-row items-start gap-6">
-                <img src={playlist.thumbnail} alt="thumbnail" className="w-40 h-40 rounded-xl object-cover thumbnail" />
+                <img src={playlist.image} alt="thumbnail" className="w-40 h-40 rounded-xl object-cover thumbnail" />
                 <div>
                   <h2 className="text-2xl font-semibold mb-2 text-white">{playlist.title}</h2>
-                  <p className="description">{playlist.description}</p>
+                  <p className="description mb-2">{playlist.description}</p>
                   <ul className="tracklist list-disc pl-5 space-y-1 text-sm">
                     {playlist.songs.map((song, index) => (
                       <li key={index}>{song}</li>
@@ -129,3 +123,4 @@ export default function VibePlaylist() {
     </div>
   );
 }
+
